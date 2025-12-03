@@ -1,0 +1,45 @@
+services:
+  users:
+    # Usa o Dockerfile específico para o serviço Users que está na raiz do projeto
+    build:
+      context: .
+      dockerfile: Dockerfile.users
+    image: users-service:latest
+    container_name: users_service
+    ports:
+      - "5001:5001"
+    environment:
+      # Variável para referenciar o serviço Products, se necessário
+      PRODUCT_SERVICE_URL: http://products:5000 
+    # Mapeia a diretoria 'app' para permitir hot-reloading em desenvolvimento local, se ativado
+    volumes:
+      - ./app:/usr/src/app/app
+    networks:
+      - microservice-network
+    restart: unless-stopped
+
+  products:
+    # Usa o Dockerfile específico para o serviço Products
+    build:
+      context: .
+      dockerfile: Dockerfile.products
+    image: products-service:latest
+    container_name: products_service
+    ports:
+      - "5000:5000"
+    environment:
+      # Variável para referenciar o serviço Users (internamente)
+      USER_SERVICE_URL: http://users:5001 
+      # Necessário para os testes/operações que usam a Gemini API, mesmo que seja um valor placeholder
+      API_KEY_GEMINI: "" 
+    # Mapeia a diretoria 'app' para hot-reloading
+    volumes:
+      - ./app:/usr/src/app/app
+    networks:
+      - microservice-network
+    restart: unless-stopped
+      
+networks:
+  microservice-network:
+    driver: bridge
+    
