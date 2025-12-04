@@ -28,7 +28,7 @@ jobs:
     # Variáveis de ambiente
     env:
       # A CHAVE DA GEMINI API é necessária para os testes de integração do 'products' service
-      API_KEY_GEMINI: ${{ secrets.GEMINI_API_KEY }}
+      API_KEY: ${{ secrets.API_KEY }}
 
     steps:
       - name: Checkout Código Fonte

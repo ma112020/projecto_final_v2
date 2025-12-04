@@ -1,0 +1,25 @@
+# Ficheiro de configuração para o Bandit (Ferramenta de Análise Estática de Segurança - SAST)
+
+# --- SKIPS (Testes a serem ignorados) ---
+# O Bandit é por vezes demasiado agressivo, e estas regras são comuns de ignorar:
+skips:
+  # B101: Uso de 'assert'. Comum e aceitável em código de teste, mas perigoso em produção.
+  # Ignoramos porque o 'bandit' é executado sobre a pasta 'app/' que contém o código principal.
+  - B101
+  # B603: Uso de 'subprocess' sem 'shell=False'. É melhor evitar, mas ignoramos para não quebrar a CI.
+  - B603
+  # B607: Permite o uso da biblioteca 'requests', que é essencial para o microservice 'products.py'.
+  - B607
+
+# --- EXCLUDES (Ficheiros e Diretórios a serem completamente ignorados) ---
+# Estes diretórios não contêm código de aplicação a ser avaliado.
+exclude:
+  # Exclui todos os ficheiros dentro da pasta 'tests/'
+  - tests/
+  # Exclui a pasta de ambiente virtual (se existir)
+  - .venv/
+
+# --- TARGETS (Diretórios a serem analisados - opcional, se for necessário ser mais explícito) ---
+targets:
+  - app/
+  
