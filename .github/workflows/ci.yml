@@ -12,6 +12,14 @@ on:
     branches:
       - main
       - develop
+  
+  workflow_dispatch:
+  # Adiconada a execução manual do pipeline através da UI (Workflow_dispatch)
+    inputs:
+      branch:
+        description: 'Ramo para executar o workflow (ex: staging, develop)'
+        required: true
+        default: 'staging'
 
 jobs:
   test_and_build:
