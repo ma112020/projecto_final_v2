@@ -1,19 +1,20 @@
 # Serviço Produtos
 
-import os 
+import os
 import requests
 from fastapi import FastAPI, HTTPException
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 import uvicorn
-from typing import Dict, Any, List
+from typing import Dict, Any
 
 # Setup OpenTelemetry (
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 from opentelemetry.instrumentation.requests import RequestsInstrumentor
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import TracerProvider
-from opentelemetry.sdk.trace.export import SimpleSpanProcessor, ConsoleSpanExporter
+from opentelemetry.sdk.trace.export import SimpleSpanProcessor
+from opentelemetry.sdk.trace.export import ConsoleSpanExporter
 
 # Configuração de Ambiente
 API_KEY = os.environ.get("CHAVE_FICTICIA")
@@ -38,6 +39,8 @@ PRODUCTS_DB: Dict[int, Dict[str, Any]] = {
 }
 
 # Permite que o User Service pergunte: "Que produtos pertencem ao user X?"
+
+
 @app.get('/products/by_user/{user_id}')
 def get_products_by_user(user_id: int):
     user_products = []
@@ -46,34 +49,42 @@ def get_products_by_user(user_id: int):
             user_products.append(p)
     return JSONResponse(content=jsonable_encoder(user_products))
 
+
 # verificação health check
 @app.get('/')
 def root():
+
     return {"status": "Product Service Operational"}
 
 # Pedido interno ao utilizador:
+
+
 def get_user_data(user_id: int):
     try:
         r = requests.get(f'{USER_SERVICE_URL}/user/profile/{user_id}')
-        r.raise_for_status() 
+        r.raise_for_status()
+
         return r.json()
     except requests.exceptions.RequestException as e:
         return {"error": "User service unavailable", "details": str(e)}
 
 # Pedido de informação de produto:
+
+
 @app.get('/product/{product_id}')
 def get_product_details(product_id: int):
     product = PRODUCTS_DB.get(product_id)
     if product is None:
-        raise HTTPException(status_code=404, detail=f"Product not found")
-    
+        raise HTTPException(status_code=404, detail="Product not found")
+
     owner_id = product.get('owner_id')
-    user_info = get_user_data(owner_id) 
-    
+    user_info = get_user_data(owner_id)
+
     return JSONResponse(content=jsonable_encoder({
         "product": product,
         "owner_details": user_info
     }))
+
 
 if __name__ == '__main__':
     uvicorn.run(app, host='0.0.0.0', port=5000)

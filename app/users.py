@@ -1,7 +1,7 @@
 # Serviço Utilizador
 
-import os 
-import requests
+# import os
+# import requests
 from fastapi import FastAPI, HTTPException
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
@@ -12,7 +12,9 @@ from typing import Dict, Any
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import TracerProvider
-from opentelemetry.sdk.trace.export import SimpleSpanProcessor, ConsoleSpanExporter # pyright: ignore[reportMissingImports]
+from opentelemetry.sdk.trace.export import SimpleSpanProcessor
+from opentelemetry.sdk.trace.export import ConsoleSpanExporter
+# pyright: ignore[reportMissingImports]
 
 
 # Configure Tracer Provider (Service Name is key for tracing)
@@ -31,19 +33,26 @@ USERS_DB: Dict[int, Dict[str, Any]] = {
 }
 
 # Verificação de serviço ativo
+
+
 @app.get('/')
 def index():
     return "User Service is running."
 
 # Verificação da informação user_id:
+
+
 @app.get('/user/profile/{user_id}')
 def get_user_profile(user_id: int):
     user = USERS_DB.get(user_id)
     if user is None:
-        raise HTTPException(status_code=404, detail=f"User with ID {user_id} not found")
+        raise HTTPException(status_code=404,
+                            detail=f"User with ID {user_id} not found")
     return JSONResponse(content=jsonable_encoder(user))
 
 # Verificação da informação user_status
+
+
 @app.get('/user/status')
 def get_user_status():
     return {"status": "User DB healthy"}
