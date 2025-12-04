@@ -2,10 +2,8 @@
 
 import os
 import requests
-from fastapi import FastAPI, HTTPException
-from fastapi.encoders import jsonable_encoder
-from fastapi.responses import JSONResponse
-import uvicorn
+from fastapi import FastAPI, HTTPException, Path
+# from fastapi.responses import JSONResponse
 from typing import Dict, Any
 
 # Setup OpenTelemetry (
@@ -17,6 +15,7 @@ from opentelemetry.sdk.trace.export import SimpleSpanProcessor
 from opentelemetry.sdk.trace.export import ConsoleSpanExporter
 
 # Configuração de Ambiente
+# É mais seguro usar variáveis de ambiente para chaves, mesmo que esta seja fictícia.
 API_KEY = os.environ.get("CHAVE_FICTICIA")
 
 # Configuração de Tracing
@@ -42,37 +41,41 @@ PRODUCTS_DB: Dict[int, Dict[str, Any]] = {
 
 
 @app.get('/products/by_user/{user_id}')
-def get_products_by_user(user_id: int):
+def get_products_by_user(
+    user_id: int = Path(..., title="O ID do utilizador a obter", ge=1)
+):
     user_products = []
     for p in PRODUCTS_DB.values():
         if p['owner_id'] == user_id:
             user_products.append(p)
-    return JSONResponse(content=jsonable_encoder(user_products))
+
+    return user_products
 
 
 # verificação health check
 @app.get('/')
 def root():
-
     return {"status": "Product Service Operational"}
 
+
 # Pedido interno ao utilizador:
-
-
 def get_user_data(user_id: int):
     try:
-        r = requests.get(f'{USER_SERVICE_URL}/user/profile/{user_id}')
+        # CORREÇÃO 1 (B113): Adicionar timeout de 5 segundos
+        r = requests.get(f'{USER_SERVICE_URL}/user/profile/{user_id}', timeout=5)
         r.raise_for_status()
 
         return r.json()
-    except requests.exceptions.RequestException as e:
-        return {"error": "User service unavailable", "details": str(e)}
+    except requests.exceptions.RequestException:
+        # Se o serviço de utilizadores falhar, não queremos expor o erro interno
+        raise HTTPException(status_code=503, detail="User Service currently unavailable.")
+
 
 # Pedido de informação de produto:
-
-
 @app.get('/product/{product_id}')
-def get_product_details(product_id: int):
+def get_product_details(
+    product_id: int = Path(..., title="O ID do produto a obter", ge=1)
+):
     product = PRODUCTS_DB.get(product_id)
     if product is None:
         raise HTTPException(status_code=404, detail="Product not found")
@@ -80,11 +83,8 @@ def get_product_details(product_id: int):
     owner_id = product.get('owner_id')
     user_info = get_user_data(owner_id)
 
-    return JSONResponse(content=jsonable_encoder({
+    # Retornar o objeto diretamente
+    return {
         "product": product,
         "owner_details": user_info
-    }))
-
-
-if __name__ == '__main__':
-    uvicorn.run(app, host='0.0.0.0', port=5000)
+    }
