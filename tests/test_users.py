@@ -12,7 +12,7 @@ def client():
     with TestClient(app) as c:
         yield c
 
-# --- Unit Tests 
+# --- Unit Tests
 
 
 @pytest.mark.unit
@@ -45,7 +45,7 @@ def test_integration_profile_endpoint_json_structure(client):
     assert data["username"] == "bob"
 
 
-# --- E2E 
+# --- E2E
 
 @pytest.mark.e2e
 @pytest.mark.staging
