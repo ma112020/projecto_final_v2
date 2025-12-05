@@ -33,5 +33,5 @@ Teste de Integração: Este teste mostra os produtos e o seu dono (puxado do out
 O sistema de testes é ativado automaticamente nestes 3 branches para garantir que o código está sempre a funcionar:
 
 develop: Onde se trabalha.
-staging: Onde se preparam os testes finais
+staging: Onde se preparam os testes finais.
 master: O código final (Produção).
