@@ -24,8 +24,9 @@ def client():
 @pytest.mark.dev
 def test_unit_get_user_profile_success():
     user_id = 1
-    result = get_user_profile(user_id)
-    assert result.body == b'{"id":1,"username":"alice","role":"admin"}'
+    response = get_user_profile(user_id)
+    expected_data = {"id":1,"username":"alice","role":"admin"}
+    assert response == expected_data
 
 # Verificaçâo de resposta errada/valor nao encontrado
 
