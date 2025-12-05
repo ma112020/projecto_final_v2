@@ -25,7 +25,7 @@ def client():
 def test_unit_get_user_profile_success():
     user_id = 1
     response = get_user_profile(user_id)
-    expected_data = {"id":1,"username":"alice","role":"admin"}
+    expected_data = {"id": 1, "username": "alice", "role": "admin"}
     assert response == expected_data
 
 # Verificaçâo de resposta errada/valor nao encontrado
@@ -71,6 +71,5 @@ def test_e2e_full_user_check(client: TestClient):
 @pytest.mark.staging
 @pytest.mark.prod
 def test_sanity_root_endpoint(client):
-    """Quick check for the root endpoint (server status)."""
     response = client.get("/")
     assert response.status_code == 200
