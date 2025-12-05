@@ -21,8 +21,8 @@ def test_unit_get_user_profile_success():
     user_id = 1
     # Nota: get_user_profile agora retorna um JSONResponse que precisa de ser decodificado no teste
     response = get_user_profile(user_id)
-    # Acessamos o corpo da resposta para verificar o JSON
-    assert response.body == b'{"id":1,"username":"alice","role":"admin"}'
+    expected_data = {"id":1,"username":"alice","role":"admin"}
+    assert response== expected_data
 
 
 @pytest.mark.unit
