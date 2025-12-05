@@ -6,10 +6,10 @@ from typing import Dict, Any
 
 # Setup de monitorização com opentelemetry
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
-from opentemetry.sdk.resources import Resource
+from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import TracerProvider
-from opentemetry.sdk.trace.export import SimpleSpanProcessor
-from opentemetry.sdk.trace.export import ConsoleSpanExporter
+from opentelemetry.sdk.trace.export import SimpleSpanProcessor
+from opentelemetry.sdk.trace.export import ConsoleSpanExporter
 # pyright: ignore[reportMissingImports]
 
 
